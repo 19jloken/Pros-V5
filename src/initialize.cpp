@@ -63,10 +63,10 @@ void initialize()
 	enableSlew(6);
 	enableSlew(7);
 
-  motorArray[frontLeftDrive]->set_gearing(pros::E_MOTOR_GEARSET_18);
-  motorArray[frontRightDrive]->set_gearing(pros::E_MOTOR_GEARSET_18);
-  motorArray[backLeftDrive]->set_gearing(pros::E_MOTOR_GEARSET_18);
-  motorArray[backRightDrive]->set_gearing(pros::E_MOTOR_GEARSET_18);
+  motorArray[frontLeftDrive]->set_gearing(pros::E_MOTOR_GEARSET_36);
+  motorArray[frontRightDrive]->set_gearing(pros::E_MOTOR_GEARSET_36);
+  motorArray[backLeftDrive]->set_gearing(pros::E_MOTOR_GEARSET_36);
+  motorArray[backRightDrive]->set_gearing(pros::E_MOTOR_GEARSET_36);
   motorArray[intakeMotor]->set_gearing(pros::E_MOTOR_GEARSET_06);
   motorArray[shooter]->set_gearing(pros::E_MOTOR_GEARSET_36);
   motorArray[liftMotor]->set_gearing(pros::E_MOTOR_GEARSET_36);
