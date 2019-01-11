@@ -25,7 +25,7 @@ void autonomous()
   resetRobotFunction();
   if(clearGyroBeforeAuton)// if the gyro should reset when the auton starts
   {
-     resetGyro();// reset the gyro
+     resetGyro();//Reset the gyro
   }
   while(!autonomousSelected)
   {
