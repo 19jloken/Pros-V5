@@ -4,16 +4,19 @@
 #include "headers/lcdCode.h"
 #include "headers/general.h"
 #include "pros/llemu.hpp"
+#include "apix.h"
 
 bool leftButtonPressed = false;
 bool centerButtonPressed = false;
 bool rightButtonPressed = false;
 
+//https://docs.littlevgl.com/
+
 void autonomousSelection()
 {
   if(autonomousSelected)
   {
-  pros::lcd::print(0, "Autonomous %d selected", autonomousMode);
+    pros::lcd::print(0, "Autonomous %d selected", autonomousMode);
     pros::lcd::set_text(1, "Center Btn to deselect");
     pros::lcd::register_btn1_cb(unselectAutonomous);
   }

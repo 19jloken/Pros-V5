@@ -30,10 +30,10 @@ void initialize()
 {
   // userAutonomousTask.suspend();
   robotFunctionTask.suspend();
-	pros::lcd::initialize();
-  pros::lcd::set_text(1, "DO NOT MOVE THE ROBOT");
-  pros::delay(1000);
-  pros::lcd::set_text(2, "Calibrating");
+	//pros::lcd::initialize();
+  //pros::lcd::set_text(1, "DO NOT MOVE THE ROBOT");
+  //pros::delay(1000);
+  //pros::lcd::set_text(2, "Calibrating");
   pros::c::adi_analog_calibrate(5);
 
   motorArray[0]->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
@@ -43,7 +43,7 @@ void initialize()
   motorArray[4]->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   motorArray[5]->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   motorArray[6]->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  motorArray[7]->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  motorArray[8]->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
 	addMotor(0);
 	addMotor(1);
@@ -52,7 +52,7 @@ void initialize()
 	addMotor(4);
 	addMotor(5);
 	addMotor(6);
-	addMotor(7);
+	addMotor(8);
 
 	enableSlew(0);
 	enableSlew(1);
@@ -61,7 +61,7 @@ void initialize()
 	enableSlew(4);
 	enableSlew(5);
 	enableSlew(6);
-	enableSlew(7);
+	enableSlew(8);
 
   motorArray[frontLeftDrive]->set_gearing(pros::E_MOTOR_GEARSET_36);
   motorArray[frontRightDrive]->set_gearing(pros::E_MOTOR_GEARSET_36);
@@ -85,7 +85,7 @@ void initialize()
  */
  void disabled()
  {
-   pros::lcd::set_text(1, "Hello PROS User!d");
+   //pros::lcd::set_text(1, "Hello PROS User!d");
  }
 
 /**
@@ -99,6 +99,6 @@ void initialize()
  */
 void competition_initialize()
 {
-  pros::lcd::set_text(1, "Hello PROS User!ci");
-	autonomousSelection();
+  //pros::lcd::set_text(1, "Hello PROS User!ci");
+	//autonomousSelection();
 }

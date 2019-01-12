@@ -27,6 +27,7 @@ enum Commands
   driveStraight,
   gyroDriveStraight,
   gyroTurn,
+  driveStrafe,
 
   PIDDriveCommandMaxValue,
 

@@ -46,6 +46,16 @@ float getRightDriveSensor()
 	return motorArray[frontRightDrive]->get_position();
 }
 
+float getFrontDriveSensor()
+{
+	return motorArray[frontRightDrive]->get_position();
+}
+
+float getBackDriveSensor()
+{
+	return motorArray[backRightDrive]->get_position();
+}
+
 float getStrafeMotorSensor()
 {
 	return motorArray[strafeWheel]->get_position();
@@ -83,8 +93,8 @@ void moveIntake(int speed)
 
 void moveDrive(int left, int right)
 {
-	pros::lcd::print(3, "get left %d", left);
-	pros::lcd::print(4, "get right %d", right);
+	//pros::lcd::print(3, "get left %d", left);
+	//pros::lcd::print(4, "get right %d", right);
 	setMotor(frontLeftDrive, left);
 	setMotor(frontRightDrive, right);
 	setMotor(backLeftDrive, left);
@@ -230,6 +240,7 @@ void robotFunction(void* param)
 	PIDController rightDrivePID;
 	PIDController gyroPID;
 	PIDController straightGyroPID;
+	PIDController strafeStraightPID;
 
 	initializePID(&leftDrivePID, .1, .05, .01, 5, 254, 0, 635);
 	initializePID(&rightDrivePID, .1, .05, .01, 5, 254, 0, 635);
@@ -237,6 +248,7 @@ void robotFunction(void* param)
 	initializePID(&gyroPID, .1, .025, .1, 10, 800, 0, 300);
 	// initializePID(&straightGyroPID, .08, .01, .0, 0, 1000, 0, 500);
 	initializePID(&straightGyroPID, .0025, .00, .0, 0, 1000, 0, 500);
+	initializePID(&strafeStraightPID, .1,.0,0,10, 1000, 0, 500);
 
 
 
@@ -278,6 +290,123 @@ void robotFunction(void* param)
 				if((fabs(getRightDriveSensor() - chassisDistance) <= driveThreshold) || (fabs(getLeftDriveSensor() - chassisDistance) <= driveThreshold))
 				startTimer(&drivePIDTimer);
 
+				if(currentTime(&drivePIDTimer) > 300)
+				driveDone = true;
+			}
+
+			else if (chassisDirection == driveStrafe)
+			{
+				heading = correctGyroValue(heading);
+				setPIDTarget(&straightGyroPID, 0); //make new PID controllers for strafe
+				setPIDTarget(&rightDrivePID, chassisDistance);
+				setPIDTarget(&leftDrivePID, chassisDistance);
+				leftSpeed = calculatePID(&leftDrivePID, getFrontDriveSensor()); //Change to front and back later
+				rightSpeed = calculatePID(&rightDrivePID, getBackDriveSensor()); ////
+				if(getFrontDriveSensor() > getBackDriveSensor())
+				chassisSpeed = getBackDriveSensor();
+				else
+				chassisSpeed = getFrontDriveSensor();
+
+				if(getFrontDriveSensor() > getBackDriveSensor())
+				leftSpeed = rightSpeed;
+				else
+				rightSpeed = leftSpeed;
+
+				if(fabs(leftSpeed) > largestDriveInput)
+				leftSpeed = largestDriveInput*sgn(leftSpeed);
+				if(fabs(rightSpeed) > largestDriveInput)
+				rightSpeed = largestDriveInput*sgn(rightSpeed);
+
+				if((gyroDirection(getGyroSensor(), heading) == 1))// if the robot is drifting left
+				{
+					 leftSpeed += (fabs(leftSpeed) * fabs(calculatePID(&straightGyroPID, gyroDifference(getGyroSensor(), heading))));
+					 rightSpeed -= (fabs(rightSpeed) * fabs(calculatePID(&straightGyroPID, gyroDifference(getGyroSensor(), heading))));
+					// leftSpeed +=fabs(leftSpeed)*.5;
+					// rightSpeed -=fabs(rightSpeed)*.5;
+					// leftSpeed += fabs(calculatePID(&straightGyroPID, gyroDifference(getGyroSensor(), heading)));
+					// rightSpeed -= fabs(calculatePID(&straightGyroPID, gyroDifference(getGyroSensor(), heading)));
+				}
+				else if((gyroDirection(getGyroSensor(), heading) == -1))//otherwise if the robot is drifting right
+				{
+					 leftSpeed -= (fabs(leftSpeed) * fabs(calculatePID(&straightGyroPID, gyroDifference(getGyroSensor(), heading))));
+					 rightSpeed += (fabs(rightSpeed) * fabs(calculatePID(&straightGyroPID, gyroDifference(getGyroSensor(), heading))));
+					// leftSpeed -=fabs(leftSpeed)*.5;
+					// rightSpeed +=fabs(rightSpeed)*.5;
+					// leftSpeed -= fabs(calculatePID(&straightGyroPID, gyroDifference(getGyroSensor(), heading)));
+					// rightSpeed += fabs(calculatePID(&straightGyroPID, gyroDifference(getGyroSensor(), heading)));
+				}
+
+				if((fabs(chassisSpeed - chassisDistance) <= driveThreshold))
+				{
+					startTimer(&drivePIDTimer);
+				}
+				if(currentTime(&drivePIDTimer) > 300)
+				driveDone = true;
+			}
+
+			else if(chassisDirection == gyroTurn)// if the robot should turn using the gyro sensor
+			{
+				chassisDistance = correctGyroValue(chassisDistance);// correct the gyro target value
+				setPIDTarget(&gyroPID, 0);
+				if((gyroDirection(getGyroSensor(), chassisDistance) == 1))
+				{
+					leftSpeed = fabs(calculatePID(&gyroPID, gyroDifference(getGyroSensor(), chassisDistance)*gyroDirection(getGyroSensor(), chassisDistance)));
+					rightSpeed = -fabs(calculatePID(&gyroPID,gyroDifference(getGyroSensor(), chassisDistance)*gyroDirection(getGyroSensor(), chassisDistance)));
+				}
+				else if((gyroDirection(getGyroSensor(), chassisDistance) == -1))
+				{
+					leftSpeed = -fabs(calculatePID(&gyroPID, gyroDifference(getGyroSensor(), chassisDistance)*gyroDirection(getGyroSensor(), chassisDistance)));
+					rightSpeed = fabs(calculatePID(&gyroPID, gyroDifference(getGyroSensor(), chassisDistance)*gyroDirection(getGyroSensor(), chassisDistance)));
+				}
+				if(fabs(getGyroSensor() - chassisDistance) <= gyroThreshold)
+				{
+					startTimer(&drivePIDTimer);
+				}
+
+				if(currentTime(&drivePIDTimer) > 300)
+				driveDone = true;
+
+			}
+
+			else if(chassisDirection == sweepRight || chassisDirection == forwardRight)
+			{
+				setPIDTarget(&rightDrivePID, chassisDistance);
+				chassisSpeed = calculatePID(&rightDrivePID, getRightDriveSensor());
+				if(chassisDirection == sweepRight)
+				{
+					rightSpeed = chassisSpeed;
+					leftSpeed = chassisSpeed*.5;
+				}
+				else
+				{
+					rightSpeed = chassisSpeed;
+					leftSpeed = 0;
+				}
+				if((fabs(getRightDriveSensor() - chassisDistance) <= driveThreshold))
+				{
+					startTimer(&drivePIDTimer);
+				}
+				if(currentTime(&drivePIDTimer) > 300)
+				driveDone = true;
+			}
+			else if(chassisDirection == sweepLeft || chassisDirection == forwardLeft)// otherwise if the robot is driving with the left drive
+			{
+				setPIDTarget(&leftDrivePID, chassisDistance);
+				chassisSpeed = calculatePID(&leftDrivePID, getLeftDriveSensor());
+				if(chassisDirection == sweepLeft)
+				{
+					rightSpeed = chassisSpeed*.5;
+					leftSpeed = chassisSpeed;
+				}
+				else
+				{
+					rightSpeed = 0;
+					leftSpeed = chassisSpeed;
+				}
+				if((fabs(getLeftDriveSensor() - chassisDistance) <= driveThreshold))
+				{
+					startTimer(&drivePIDTimer);
+				}
 				if(currentTime(&drivePIDTimer) > 300)
 				driveDone = true;
 			}
@@ -520,7 +649,14 @@ void robotFunction(void* param)
 			if(fabs(rightSpeed) > largestDriveInput)
 			rightSpeed = largestDriveInput*sgn(rightSpeed);
 
-			moveDrive(leftSpeed, rightSpeed);
+			if (chassisDirection != driveStrafe)
+			{
+				moveDrive(leftSpeed, rightSpeed);
+			}
+			else
+			{
+				//Add function to move the front and back to account for drift in strafe
+			}
 		}
 		else// if the drive is done
 		{

@@ -7,7 +7,7 @@
 // //autonomous routines
 void autonomous1 ()
 {
-  // addCommand(gyroDriveStraight, 0, 2500);
+   addCommand(gyroDriveStraight, 0, 2500);
   // addCommand(gyroTurn, 900);
   // addCommand(gyroDriveStraight, 900, 500);
   // addCommand(gyroTurn, 1800);

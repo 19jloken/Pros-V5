@@ -4,14 +4,13 @@
 #include "pros/rtos.hpp"
 #include "pros/misc.hpp"
 
-const int frontLeftDrive = 0; // port 1
-const int frontRightDrive = 1; // port 2
-const int backLeftDrive = 2; // port 3
-const int backRightDrive = 3; // port 4
-const int strafeWheel = 4; // port 5
+const int frontLeftDrive = 1; // port 2
+const int frontRightDrive = 2; // port 3
+const int backLeftDrive = 3; // port 4
+const int backRightDrive = 4; // port 5
 const int intakeMotor = 5; // port 6
-const int shooter = 6; // port 7
-const int liftMotor = 7; // port 8
+const int shooter = 0; // port 1
+const int liftMotor = 8; // port 9
 
 
 bool clearGyroBeforeAuton = true;

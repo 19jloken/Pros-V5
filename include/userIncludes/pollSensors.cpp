@@ -42,9 +42,9 @@ void pollSensors(void* param)
 		filterDema(&gyroFilter, correctGyroValue(gyroSensor.get_value()));
 		filterDema(&leftDriveFilter, motorArray[frontLeftDrive]->get_position());
 		filterDema(&rightDriveFilter, motorArray[frontRightDrive]->get_position());
-    pros::lcd::print(5, "get left %f", motorArray[frontLeftDrive]->get_position());
-    pros::lcd::print(6, "get right sensor %f", motorArray[frontRightDrive]->get_position());
-    pros::lcd::print(7, "get raw gyro sensor %f", gyroSensor.get_value());
+    //pros::lcd::print(5, "get left %f", motorArray[frontLeftDrive]->get_position());
+    //pros::lcd::print(6, "get right sensor %f", motorArray[frontRightDrive]->get_position());
+    //pros::lcd::print(7, "get raw gyro sensor %f", gyroSensor.get_value());
 
     pros::c::task_delay_until(&lastRun, SensorRefreshRate);
 		lastRun = pros::c::millis();

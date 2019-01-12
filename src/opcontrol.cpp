@@ -40,26 +40,28 @@ void opcontrol()
   enableSlew(4);
   enableSlew(5);
   enableSlew(6);
-  enableSlew(7);
+  enableSlew(8);
+
+
 
   initializeTimer(&opLauncherTimer);
   zeroTimer(&opLauncherTimer);
   stopTimer(&opLauncherTimer);
   uint32_t lastRun = pros::c::millis();
-  pros::lcd::set_text(1, "Hello PROS User!u");
+  //pros::lcd::set_text(1, "Hello PROS User!u");
 
   while(true)//Runs driver control in infinite loop
   {
-    pros::lcd::set_text(1, "Hello PROS User");
+    //pros::lcd::set_text(1, "Hello PROS User");
     if (partner.is_connected())//Checks if their are two controllers connected
     {
-      pros::lcd::set_text(1, "Two Controller Drive");
+      //pros::lcd::set_text(1, "Two Controller Drive");
       doubleControllerDrive();//Uses the two controller drive code
     }
     else//If there is only one controller
     {
-      pros::lcd::set_text(0, "Single Controller Drive");
-      pros::lcd::print(2, "raw cali %d", pros::c::adi_analog_read_calibrated_HR(5));
+      //pros::lcd::set_text(0, "Single Controller Drive");
+      //pros::lcd::print(2, "raw cali %d", pros::c::adi_analog_read_calibrated_HR(5));
       singleControllerDrive();//Uses the one controller drive code
     }
     pros::c::task_delay_until(&lastRun, 5);
@@ -144,7 +146,7 @@ void doubleControllerDrive()
   {
     if(!launcherWasLoaded)
     {
-      firstLoadedPostion = motorArray[6]->get_position();;
+      firstLoadedPostion = motorArray[6]->get_position();
     }
       launcherWasLoaded = true;
       zeroTimer(&opLauncherTimer);

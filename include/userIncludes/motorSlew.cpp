@@ -19,7 +19,7 @@ pros::Motor portFour (4);
 pros::Motor portFive (5);
 pros::Motor portSix (6);
 pros::Motor portSeven (7);
-pros::Motor portEight (8);
+pros::Motor portNine (9);
 
 void addMotor(int name, int slew)
 {

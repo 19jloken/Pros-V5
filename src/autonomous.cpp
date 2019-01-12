@@ -19,7 +19,7 @@
 
 void autonomous()
 {
-  pros::lcd::set_text(1, "Hello PROS User!");
+  //pros::lcd::set_text(1, "Hello PROS User!");
   //pros::lcd::clear();
   robotFunctionTask.resume();
   resetRobotFunction();
